@@ -85,6 +85,10 @@ int main(int, char **)
 			method<int>("Create", &Bitmap::Create).
 			method<int>("Load", &Bitmap::Load).
 			method("Draw_rotated", &Bitmap::Draw_rotated).
+			constants( 	{ 
+							{ "ALLEGRO_FLIP_HORIZONTAL", ALLEGRO_FLIP_HORIZONTAL },
+							{ "ALLEGRO_FLIP_VERTICAL", ALLEGRO_FLIP_VERTICAL },
+						} ).
 		end().open().glue();
 
 	state.

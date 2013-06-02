@@ -70,10 +70,6 @@ while not quit do
 	end
 
 	if event:Type() == Event.ALLEGRO_EVENT_TIMER then
-		--Check saved time against current time
-		--If greater than interval time, change timer speed
-		--print("tick");
-		--Save current time here
 		if event:Timer_count() == timer:Get_count() then
 			if left then
 				angle = angle - .01;
@@ -81,8 +77,16 @@ while not quit do
 			if right then
 				angle = angle + .01;
 			end
+			if up then
+				dx = dx + math.cos(angle);
+				dy = dy + math.sin(angle);
+			end
+			if down then
+				dx = dx - math.cos(angle);
+				dy = dy - math.sin(angle);
+			end
 			display:Clear_to_color(clear_color);
-			bitmap:Draw_rotated(cx, cy, dx, dy, angle, 0);
+			bitmap:Draw_rotated(cx, cy, dx, dy, angle, Bitmap.ALLEGRO_FLIP_HORIZONTAL);
 			display:Flip();		
 		end
 		if event:Timer_count() < timer:Get_count() then
