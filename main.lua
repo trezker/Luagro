@@ -71,11 +71,17 @@ while not quit do
 
 	if event:Type() == Event.ALLEGRO_EVENT_TIMER then
 		if event:Timer_count() == timer:Get_count() then
-			if left then
+			if left and up then
 				angle = angle - .01;
 			end
-			if right then
+			if right and up then
 				angle = angle + .01;
+			end
+			if left and down then
+				angle = angle + .01;
+			end
+			if right and down then
+				angle = angle - .01;
 			end
 			if up then
 				dx = dx + math.cos(angle);
