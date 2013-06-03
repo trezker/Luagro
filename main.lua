@@ -60,6 +60,7 @@ local dy = 100;
 local forcex = 0;
 local forcey = 0;
 local angle = 0;
+local drifting = false;
 
 local left = false;
 local right = false;
@@ -125,8 +126,26 @@ while not quit do
 			local dirx = math.cos(angle);
 			local diry = math.sin(angle);
 			local dotproduct = Dotproduct(forcex, forcey, dirx, diry);
-			travelx = dirx * dotproduct;
-			travely = diry * dotproduct;
+
+			local sidex = math.cos(angle + math.pi/2);
+			local sidey = math.sin(angle + math.pi/2);
+			local dotproduct_side = Dotproduct(forcex, forcey, sidex, sidey);
+			--print(dotproduct_side);
+			if not drifting and math.abs(dotproduct_side) > 3.6 then
+				drifting = true;
+				print("drifting");
+			end
+			if drifting and math.abs(dotproduct_side) < 2 then
+				drifting = false;
+				print("stopped drifting");
+			end
+			if drifting then
+				travelx = forcex;
+				travely = forcey;
+			else
+				travelx = dirx * dotproduct;
+				travely = diry * dotproduct;
+			end
 			
 			turnspeed = .01 * dotproduct;
 			turnspeed = turnspeed - ((dotproduct * dotproduct) / 10000);
