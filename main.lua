@@ -149,6 +149,10 @@ while not quit do
 			
 			turnspeed = .01 * dotproduct;
 			turnspeed = turnspeed - ((dotproduct * dotproduct) / 10000);
+			if drifting then
+				turnspeed = turnspeed * 2;
+			end
+			
 			if dotproduct > 0.1 then
 				if left then
 					angle = angle - turnspeed;
