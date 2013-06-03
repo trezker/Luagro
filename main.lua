@@ -36,7 +36,7 @@ display:Create(800, 600);
 local clear_color = Color.new();
 clear_color:Map_rgba_f(0, 0, 0, 0);
 
-local timer_speed = .018;
+local timer_speed = .01;
 local timer = Timer.new();
 timer:Create(timer_speed);
 
@@ -153,7 +153,7 @@ while not quit do
 			bitmap:Draw_rotated(cx, cy, dx, dy, angle, Bitmap.ALLEGRO_FLIP_HORIZONTAL);
 			display:Flip();		
 		end
-		if event:Timer_count() < timer:Get_count() then
+		if event:Timer_count() < timer:Get_count() - 4 then
 			timer_speed = timer_speed * 1.1;
 			timer:Set_speed(timer_speed);
 			print("Tick too fast, setting speed to " .. timer_speed);
