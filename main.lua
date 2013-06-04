@@ -57,8 +57,8 @@ local cx = 31;
 local cy = 16;
 local dx = 100;
 local dy = 100;
-local forcex = 0;
-local forcey = 0;
+local velocityx = 0;
+local velocityy = 0;
 local angle = 0;
 local drifting = false;
 
@@ -106,32 +106,35 @@ while not quit do
 
 	if event:Type() == Event.ALLEGRO_EVENT_TIMER then
 		if event:Timer_count() == timer:Get_count() then
-			local accelleration = .5;
+			local mass = 1000;
+			local accelleration = 500;
 			if up then
-				forcex = forcex + math.cos(angle) * accelleration;
-				forcey = forcey + math.sin(angle) * accelleration;
+				velocityx = velocityx + math.cos(angle) * (accelleration/mass);
+				velocityy = velocityy + math.sin(angle) * (accelleration/mass);
 			end
 			if down then
-				forcex = forcex - math.cos(angle) * accelleration;
-				forcey = forcey - math.sin(angle) * accelleration;
+				velocityx = velocityx - math.cos(angle) * (accelleration/mass);
+				velocityy = velocityy - math.sin(angle) * (accelleration/mass);
 			end
-			local drag = SquaredLength(forcex, forcey) / 100;
-			local newlength = Length(forcex, forcey) - drag;
+			local drag = (SquaredLength(velocityx, velocityy));
+			drag = drag * Length(velocityx, velocityy);
+			drag = drag / mass;
+			local newlength = Length(velocityx, velocityy) - drag;
 			if newlength < .4 then
-				newlength = 0;
+				--newlength = 0;
 			end
 			--print(newlength);
-			forcex, forcey = Normalize(forcex, forcey);
-			forcex, forcey = Stretch(forcex, forcey, newlength);
+			velocityx, velocityy = Normalize(velocityx, velocityy);
+			velocityx, velocityy = Stretch(velocityx, velocityy, newlength);
 
 			--Dotproduct used to project current force onto current heading. 
 			local dirx = math.cos(angle);
 			local diry = math.sin(angle);
-			local dotproduct = Dotproduct(forcex, forcey, dirx, diry);
+			local dotproduct = Dotproduct(velocityx, velocityy, dirx, diry);
 
 			local sidex = math.cos(angle + math.pi/2);
 			local sidey = math.sin(angle + math.pi/2);
-			local dotproduct_side = Dotproduct(forcex, forcey, sidex, sidey);
+			local dotproduct_side = Dotproduct(velocityx, velocityy, sidex, sidey);
 			
 			if math.abs(dotproduct_side) > 1 then
 				--print(math.abs(dotproduct_side));
@@ -145,12 +148,16 @@ while not quit do
 				print("stopped drifting");
 			end
 			if drifting then
-				travelx = forcex;
-				travely = forcey;
+				travelx = velocityx;
+				travely = velocityy;
 			else
 				travelx = dirx * dotproduct;
 				travely = diry * dotproduct;
 			end
+			
+			local travel = Length(travelx, travely);
+			local kmh = 3.6 * ((travel * 100) / 16); --Kilometers per hour
+			print(kmh);
 			
 			turnspeed = .01 * dotproduct;
 			turnspeed = turnspeed - ((dotproduct * dotproduct) / 10000);
