@@ -106,19 +106,21 @@ while not quit do
 
 	if event:Type() == Event.ALLEGRO_EVENT_TIMER then
 		if event:Timer_count() == timer:Get_count() then
+			local accelleration = .5;
 			if up then
-				forcex = forcex + math.cos(angle) * .6;
-				forcey = forcey + math.sin(angle) * .6;
+				forcex = forcex + math.cos(angle) * accelleration;
+				forcey = forcey + math.sin(angle) * accelleration;
 			end
 			if down then
-				forcex = forcex - math.cos(angle) * .6;
-				forcey = forcey - math.sin(angle) * .6;
+				forcex = forcex - math.cos(angle) * accelleration;
+				forcey = forcey - math.sin(angle) * accelleration;
 			end
 			local drag = SquaredLength(forcex, forcey) / 100;
 			local newlength = Length(forcex, forcey) - drag;
-			if newlength < .5 then
+			if newlength < .4 then
 				newlength = 0;
 			end
+			--print(newlength);
 			forcex, forcey = Normalize(forcex, forcey);
 			forcex, forcey = Stretch(forcex, forcey, newlength);
 
@@ -130,8 +132,11 @@ while not quit do
 			local sidex = math.cos(angle + math.pi/2);
 			local sidey = math.sin(angle + math.pi/2);
 			local dotproduct_side = Dotproduct(forcex, forcey, sidex, sidey);
-			--print(dotproduct_side);
-			if not drifting and math.abs(dotproduct_side) > 3.6 then
+			
+			if math.abs(dotproduct_side) > 1 then
+				--print(math.abs(dotproduct_side));
+			end
+			if not drifting and math.abs(dotproduct_side) > 3.3 then
 				drifting = true;
 				print("drifting");
 			end
