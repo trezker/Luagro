@@ -107,7 +107,7 @@ while not quit do
 	if event:Type() == Event.ALLEGRO_EVENT_TIMER then
 		if event:Timer_count() == timer:Get_count() then
 			local mass = 1000;
-			local accelleration = 500;
+			local accelleration = 100;
 			if up then
 				velocityx = velocityx + math.cos(angle) * (accelleration/mass);
 				velocityy = velocityy + math.sin(angle) * (accelleration/mass);
@@ -116,12 +116,13 @@ while not quit do
 				velocityx = velocityx - math.cos(angle) * (accelleration/mass);
 				velocityy = velocityy - math.sin(angle) * (accelleration/mass);
 			end
-			local drag = (SquaredLength(velocityx, velocityy));
+			
+			local drag = (SquaredLength(velocityx/2, velocityy/2));
 			drag = drag * Length(velocityx, velocityy);
 			drag = drag / mass;
 			local newlength = Length(velocityx, velocityy) - drag;
-			if newlength < .4 then
-				--newlength = 0;
+			if newlength < 2 and not (up or down) then
+				newlength = 0;
 			end
 			--print(newlength);
 			velocityx, velocityy = Normalize(velocityx, velocityy);
@@ -136,24 +137,28 @@ while not quit do
 			local sidey = math.sin(angle + math.pi/2);
 			local dotproduct_side = Dotproduct(velocityx, velocityy, sidex, sidey);
 			
-			if math.abs(dotproduct_side) > 1 then
+			if math.abs(dotproduct_side) > .1 then
 				--print(math.abs(dotproduct_side));
 			end
-			if not drifting and math.abs(dotproduct_side) > 3.3 then
+			if not drifting and math.abs(dotproduct_side) > 0.44 then
 				drifting = true;
 				print("drifting");
 			end
-			if drifting and math.abs(dotproduct_side) < 2 then
+			if drifting and math.abs(dotproduct_side) < 0.43 then
 				drifting = false;
 				print("stopped drifting");
 			end
 			if drifting then
-				travelx = velocityx;
-				travely = velocityy;
+				--TODO: Perhaps only apply extra resistance sideways...
+				travelx = velocityx * 0.99;
+				travely = velocityy * 0.99;
 			else
 				travelx = dirx * dotproduct;
 				travely = diry * dotproduct;
 			end
+			-- Discard the part of your force that's sideways every update...
+			velocityx = travelx;
+			velocityy = travely;
 			
 			local travel = Length(travelx, travely);
 			local kmh = 3.6 * ((travel * 100) / 16); --Kilometers per hour
@@ -161,9 +166,6 @@ while not quit do
 			
 			turnspeed = .01 * dotproduct;
 			turnspeed = turnspeed - ((dotproduct * dotproduct) / 10000);
-			if drifting then
-				turnspeed = turnspeed * 2;
-			end
 			
 			if dotproduct > 0.1 then
 				if left then
@@ -185,7 +187,7 @@ while not quit do
 			dy = dy + travely;
 			
 			display:Clear_to_color(clear_color);
-			bitmap:Draw_rotated(cx, cy, dx, dy, angle, Bitmap.ALLEGRO_FLIP_HORIZONTAL);
+			bitmap:Draw_rotated(cx, cy, dx/2, dy/2, angle, Bitmap.ALLEGRO_FLIP_HORIZONTAL);
 			display:Flip();		
 		end
 		if event:Timer_count() < timer:Get_count() - 4 then
