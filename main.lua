@@ -190,7 +190,7 @@ while not quit do
 			dy = dy + travely;
 			
 			display:Clear_to_color(clear_color);
-			bitmap:Draw_rotated(cx, cy, dx/2, dy/2, angle, Bitmap.ALLEGRO_FLIP_HORIZONTAL);
+			bitmap:Draw_scaled_rotated(cx, cy, dx/2, dy/2, 0.5, 0.5, angle, Bitmap.ALLEGRO_FLIP_HORIZONTAL);
 			display:Flip();		
 		end
 		if event:Timer_count() < timer:Get_count() - 4 then

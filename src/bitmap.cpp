@@ -26,3 +26,7 @@ int Bitmap::Load(const char *filename) {
 void Bitmap::Draw_rotated(float cx, float cy, float dx, float dy, float angle, int flags) {
 	al_draw_rotated_bitmap(bitmap, cx, cy, dx, dy, angle, flags);
 }
+
+void Bitmap::Draw_scaled_rotated(float cx, float cy, float dx, float dy, float xscale, float yscale, float angle, int flags) {
+	al_draw_scaled_rotated_bitmap(bitmap, cx, cy, dx, dy, xscale, yscale, angle, flags);
+}
