@@ -138,7 +138,7 @@ while not quit do
 			local dotproduct_side = Dotproduct(velocityx, velocityy, sidex, sidey);
 			
 			if math.abs(dotproduct_side) > .1 then
-				--print(math.abs(dotproduct_side));
+				--print(dotproduct_side);
 			end
 			if not drifting and math.abs(dotproduct_side) > 0.44 then
 				drifting = true;
@@ -149,9 +149,12 @@ while not quit do
 				print("stopped drifting");
 			end
 			if drifting then
-				--TODO: Perhaps only apply extra resistance sideways...
-				travelx = velocityx * 0.99;
-				travely = velocityy * 0.99;
+				--Extra friction sideways
+				local sidex = sidex * dotproduct_side * .01;
+				local sidey = sidey * dotproduct_side * .01;
+
+				travelx = velocityx - sidex;
+				travely = velocityy - sidey;
 			else
 				travelx = dirx * dotproduct;
 				travely = diry * dotproduct;
@@ -162,7 +165,7 @@ while not quit do
 			
 			local travel = Length(travelx, travely);
 			local kmh = 3.6 * ((travel * 100) / 16); --Kilometers per hour
-			print(kmh);
+			--print(kmh);
 			
 			turnspeed = .01 * dotproduct;
 			turnspeed = turnspeed - ((dotproduct * dotproduct) / 10000);
